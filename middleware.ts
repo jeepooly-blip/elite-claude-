@@ -1,18 +1,19 @@
-import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from './i18n';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales,
+const locales = ['en', 'ar'];
 
-  // Used when no locale matches
-  defaultLocale,
-
-  // Don't use locale prefix for default locale
-  localePrefix: 'always',
-});
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  
+  // Redirect root to /en
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/en', request.url));
+  }
+  
+  return NextResponse.next();
+}
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(ar|en|fr|nl|de|da|es|zh|ru|hi|pt)/:path*'],
+  matcher: ['/', '/(ar|en)/:path*'],
 };
